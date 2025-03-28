@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from .models import Business, Customer, Transaction, Role, Staff, Inventory, BillItem, Bill
 from .serializers import BusinessSerializer, CustomerSerializer, TransactionSerializer, RoleSerializer, StaffSerializer, \
-    InventorySerializer, BillSerializer, BillItemSerializer, UserSerializer
+    InventorySerializer, BillSerializer, BillItemSerializer, UserSerializer, UserBusinessSerializer
 
 
 class BusinessViewSet(viewsets.ModelViewSet):
@@ -95,3 +95,10 @@ class UserRegistrationView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CurrentUserBusinessView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserBusinessSerializer(request.user)
+        return Response(serializer.data)

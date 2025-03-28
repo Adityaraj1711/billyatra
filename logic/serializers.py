@@ -94,3 +94,23 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+
+class UserBusinessSerializer(serializers.Serializer):
+    user = serializers.SerializerMethodField()
+    business = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+        return {
+            'id': obj.id,
+            'username': obj.username,
+            'email': obj.email
+        }
+
+    def get_business(self, obj):
+        # Check if user owns a business
+        if hasattr(obj, 'owned_business'):
+            return BusinessSerializer(obj.owned_business).data
+        # Check if user is staff of any business
+        elif obj.staff_memberships.exists():
+            return BusinessSerializer(obj.staff_memberships.first().business).data
+        return None

@@ -12,7 +12,6 @@ class Business(models.Model):
     def __str__(self):
         return self.name
 
-
     def clean(self):
         # Ensure a user can only own one business
         if self.owner and Business.objects.filter(owner=self.owner).exclude(id=self.id).exists():
